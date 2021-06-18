@@ -1,4 +1,4 @@
-# % Facts about sessions, and respective topics 
+% Facts about sessions, and respective topics 
 
 session('Rules; Semantic Technology; and Cross-Industry Standards',
 	['XBRL - Extensible Business Reporting Language',

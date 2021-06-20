@@ -4,15 +4,21 @@
 % 
 % return: points of keyword if kewyord is found in session
 %         0 otherwise
-is_in_session(Input, Keyword, Points, Score):-
-	sub_string(case_insensitive, Keyword, Input),
+
+is_in_session(_, [], 0).
+is_in_session(Input, [Head|Tail], Score):-
+	pairs_keys(Head, Keyword),
+	pairs_values(Head, Points),
+	sub_string(case_insensitive, Keyword , Input),
 	Score is Points,
 	!.
 
-is_in_session(Input, Keyword, Points, Score):-
-    \+(sub_string(case_insensitive, Keyword, Input)),
-    Score is 0,
-    !.
+is_in_session(_, [], 0).
+is_in_session(Input, [Head|Tail], Score):-
+	pairs_keys(Head, Keyword),
+	\+(sub_string(case_insensitive, Keyword , Input)),
+	Score is 0,
+	!.
 
 
 % parameters: title - the title of a session
@@ -20,10 +26,10 @@ is_in_session(Input, Keyword, Points, Score):-
 %             list 2 - list of points 
 % 
 % return: score associated with the title  
-title_score(_, [], [], 0).
-title_score(Title, [Head1|Tail1], [Head2|Tail2], Score):-
-	title_score(Title, Tail1, Tail2, RemainingScore),
-	is_in_session(Title, Head1, Head2, TitleScore),
+title_score(_, [], 0).
+title_score(Title, [Head|Tail], Score):-
+	title_score(Title, Tail, RemainingScore),
+	is_in_session(Title, Head, TitleScore),
 	Score is TitleScore * 2 + RemainingScore.
 
 
@@ -32,10 +38,10 @@ title_score(Title, [Head1|Tail1], [Head2|Tail2], Score):-
 %             list 2 - list of points 
 % 
 % return: list with subject scores of a session
-subject_score(_, [], [], 0).
-subject_score(Subject, [Head1|Tail1], [Head2|Tail2], Score):-
-	subject_score(Subject, Tail1, Tail2, RemainingScore),
-	is_in_session(Subject, Head1, Head2, SubjectScore),
+subject_score(_, [], 0).
+subject_score(Subject, [Head|Tail], Score):-
+	subject_score(Subject, Tail, RemainingScore),
+	is_in_session(Subject, Head, SubjectScore),
 	Score is SubjectScore + RemainingScore.
 
 
@@ -44,10 +50,10 @@ subject_score(Subject, [Head1|Tail1], [Head2|Tail2], Score):-
 %             list 3 - list of points 
 % 
 % return: list of scores associated with the subject  
-subject_total_score([], _, _, []).
-subject_total_score([Head1|Tail1], Keywords, Points, Score):-
-	subject_total_score(Tail1, Keywords, Points, RemainingScore),
-	subject_score(Head1, Keywords, Points, SubjectScore),
+subject_total_score([], _, []).
+subject_total_score([Head|Tail], KeywordPairs, Score):-
+	subject_total_score(Tail, KeywordPairs, RemainingScore),
+	subject_score(Head, KeywordPairs, SubjectScore),
 	append([SubjectScore], RemainingScore, Score).
 
 
@@ -57,9 +63,10 @@ subject_total_score([Head1|Tail1], Keywords, Points, Score):-
 %             Points - list of keyword points
 % 
 % return: total score of session which is 1000 * Max + Sum
-session_score(Title, Subjects, Keywords, Points, TotalScore):-
-	title_score(Title, Keywords, Points, TitleScore),
-	subject_total_score(Subjects, Keywords, Points, SubjectScore),
+subject_total_score([], [], _, 0).
+session_score(Title, Subjects, KeywordPairs, TotalScore):-
+	title_score(Title, KeywordPairs, TitleScore),
+	subject_total_score(Subjects, KeywordPairs, SubjectScore),
 	append([TitleScore], SubjectScore, Score),
 	sum_list(Score, Sum),
 	max_list(Score, Max),
@@ -73,8 +80,8 @@ session_score(Title, Subjects, Keywords, Points, TotalScore):-
 % 
 % return: list with total scores of all sessions
 score([], [], _, _, []).
-score([Head1|Tail1], [Head2|Tail2], Keywords, Points, TotalScore):-
-	score(Tail1, Tail2, Keywords, Points, RemainingScore),
-	session_score(Head1, Head2, Keywords, Points, SessionScore),
+score([Head1|Tail1], [Head2|Tail2], KeywordPairs, TotalScore):-
+	score(Tail1, Tail2, KeywordPairs, RemainingScore),
+	session_score(Head1, Head2, KeywordPairs, SessionScore),
 	append([SessionScore], RemainingScore, TotalScore),
 	!.

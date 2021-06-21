@@ -43,8 +43,7 @@ get_sub_keywords(Keyword, []) :-
 
 % Keyword is a phrase
 get_sub_keywords(Keyword, SubKeywords) :-
-    pairs_keys([Keyword], [UnweightedKeyword]),                     % Get phrase
-    pairs_values([Keyword], [Weight]),                              % Get weight
+    pairs_keys_values([Keyword], [UnweightedKeyword], [Weight]),    % Seperate phrase and weight
     
     atomic_list_concat(SubKeywordList, ' ', UnweightedKeyword),     % Detect whitespace and split to a list of words
     length(SubKeywordList, NumberOfKeywords),                       % Find number of words in phrase
@@ -56,6 +55,7 @@ get_sub_keywords(Keyword, SubKeywords) :-
 add_weight_to_sub_keywords([], _, WeightedKeywords, WeightedKeywords).
 % Recursively add all sub keywords to a list
 add_weight_to_sub_keywords([Keyword|Keywords], Weight, PreviousList, WeightedKeywords) :-
+    % Seperate phrase and weight
     pairs_keys_values([WeightedKeyword], [Keyword], [Weight]),
     % Repeat until there are no remaining keywords to be added
     add_weight_to_sub_keywords(Keywords, Weight, [WeightedKeyword|PreviousList], WeightedKeywords).

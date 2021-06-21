@@ -4,17 +4,17 @@
 % return: points of keyword if kewyord is found in session
 %         0 otherwise
 is_in_session(_, [], 0).
-is_in_session(Input, [Head|Tail], Score):-
-	pairs_keys(Head, Keyword),
-	pairs_values(Head, Points),
+is_in_session(Input, [Head|_], Score):-
+	pairs_keys([Head], [Keyword]),
+	pairs_values([Head], [Points]),
 	sub_string(case_insensitive, Keyword , Input),
 	Score is Points,
 	!.
 
 is_in_session(_, [], 0).
-is_in_session(Input, [Head|Tail], Score):-
-	pairs_keys(Head, Keyword),
-	\+(sub_string(case_insensitive, Keyword , Input)),
+is_in_session(Input, [Head|_], Score):-
+	pairs_keys([Head], [Keyword]),
+	\+(sub_string(case_insensitive, Keyword , Input))
 	Score is 0,
 	!.
 

@@ -13,15 +13,15 @@
 
 
 query(ListOfKeywords) :- 
-    generate_keyword_score_pairs(ListOfKeywords, [], ProcessedList),
+    generate_keyword_score_pairs(ListOfKeywords, [], ProcessedKeywords),
 
     findall(X, session(X,_), Titles),
 	findall(Y, session(_,Y), Subjects),
-	score(Titles, Subjects, ProcessedList, Scores),
+	score(Titles, Subjects, ProcessedKeywords, Scores),
 
 	pairs_keys_values(TitleScorePairs, Titles, Scores),
-	sort(TitleScorePairs, TitlesFinal, ScoresFinal),
-	print_results(TitlesFinal, ScoresFinal).
+	sort(TitleScorePairs, SortedTitles, SortedScores),
+	print_results(SortedTitles, SortedScores).
 
 
 

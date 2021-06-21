@@ -64,3 +64,32 @@ add_weight_to_sub_keywords([Keyword|Keywords], Weight, PreviousList, WeightedKey
 parse(Keyword, [FullKeyword|SubKeywords]) :- 
     ensure_full_keyword(Keyword, FullKeyword),
     get_sub_keywords(FullKeyword, SubKeywords).
+
+
+
+
+
+
+
+
+
+
+
+% Gets Start_list, which is a list of key-value pairs (title-score) and sorts in descending order by score
+% Returns separated titles and scores lists
+sort_Res(Start_list,Titles_final,Scores_final) :-
+	transpose_pairs(Start_list,TempList),
+	% transpose_pairs is bbuilt in swi-polog and flips the key-value pairs onto value-key pairs and sorts by value ascending order
+	reverse(Temp_list, Sorted_list),
+    %Now it is sorted in desc order
+	pairs_values(Sorted_list,Titles_final),
+	pairs_keys(Sorted_list,Scores_final). %Separate lists and return them
+
+
+printResults([],[]).
+printResults([H_titles|T1],[H_scores|T2]):-
+	write(' Session: '),
+	write(H_titles),nl,
+	write('	Score = '),
+	write(H_scores),nl,
+	printResults(T1,T2).

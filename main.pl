@@ -24,16 +24,16 @@ generate_keyword_score_pairs([Keyword|ListOfKeywords], PreviousList, ProcessedLi
 % Keyword matches the pattern keyword-weight
 ensure_full_keyword(Keyword, Keyword) :- 
     pairs_keys_values([Keyword], _, [Weight]),
-    number(Weight),                                     % Required for words with dashes (eg. semi-transparent)
-    !.                                                  % Prevent unnecessary second pass
+    number(Weight),                                                 % Required for words with dashes (eg. semi-transparent)
+    !.                                                              % Prevent unnecessary second pass
 
 % Keyword lacks weight
 ensure_full_keyword(Keyword, FullKeyword) :- 
     \+ (
         pairs_keys_values([Keyword], _, [Weight]),
-        number(Weight)                                  % Required for words with dashes (eg. semi-transparent)
+        number(Weight)                                              % Required for words with dashes (eg. semi-transparent)
     ),                   
-    pairs_keys_values([FullKeyword], [Keyword], [1]).   % Add default weight (1)
+    pairs_keys_values([FullKeyword], [Keyword], [1]).               % Add default weight (1)
 
 % Keyword is a single word
 get_sub_keywords(Keyword, []) :-

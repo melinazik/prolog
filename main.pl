@@ -101,23 +101,23 @@ is_in_session(Input, KeywordPair, 0) :-
 	!.																% Prevent unnecessary second pass
 
 % Calculate the score associated with the subject of a session
-subject_score(_, [], 0).
-subject_score(Subject, [KeywordPair|RemainingKeywordPairs], Score):-
-	subject_score(Subject, RemainingKeywordPairs, RemainingScore),
+get_subject_score(_, [], 0).
+get_subject_score(Subject, [KeywordPair|RemainingKeywordPairs], Score):-
+	get_subject_score(Subject, RemainingKeywordPairs, RemainingScore),
 	is_in_session(Subject, KeywordPair, SubjectScore),				% Check if keyword is contained in the subject
 	Score is SubjectScore + RemainingScore.							% Add the subject score
 
 % Calculate the scores associated with the subjects of a session and store them in a list
-subject_scores_list([], _, []).
-subject_scores_list([Subject|RemainingSubjects], KeywordPairs, Scores):-
-	subject_scores_list(RemainingSubjects, KeywordPairs, TempScores),
-	subject_score(Subject, KeywordPairs, SubjectScore),
+get_subject_scores_list([], _, []).
+get_subject_scores_list([Subject|RemainingSubjects], KeywordPairs, Scores):-
+	get_subject_scores_list(RemainingSubjects, KeywordPairs, TempScores),
+	get_subject_score(Subject, KeywordPairs, SubjectScore),
 	append([SubjectScore], TempScores, Scores).						% Add the subject score in the subject scores list
 
 % Calculate the total score of a session
-session_score(Title, Subjects, KeywordPairs, TotalScore):-
-	subject_scores_list(Subjects, KeywordPairs, SubjectScores),
-	subject_score(Title, KeywordPairs, TitleScore),
+get_session_score(Title, Subjects, KeywordPairs, TotalScore):-
+	get_subject_scores_list(Subjects, KeywordPairs, SubjectScores),
+	get_subject_score(Title, KeywordPairs, TitleScore),
 
 	DoubleTitleScore is 2 * TitleScore,								% Title score counts as double
 	append([DoubleTitleScore], SubjectScores, Scores),				% Add the title score to the subject scores list
@@ -130,7 +130,7 @@ session_score(Title, Subjects, KeywordPairs, TotalScore):-
 get_session_scores([], [], _, []).
 get_session_scores([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], KeywordPairs, TotalScores):-
 	get_session_scores(RemainingTitles, RemainingSessionSubjects, KeywordPairs, TempScores),
-	session_score(Title, SessionSubjects, KeywordPairs, SessionScore),
+	get_session_score(Title, SessionSubjects, KeywordPairs, SessionScore),
 	append([SessionScore], TempScores, TotalScores),				% Add the session score in the session scores list
 	!.																% Prevent unnecessary second pass
 

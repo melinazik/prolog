@@ -100,13 +100,6 @@ is_in_session(Input, KeywordPair, 0) :-
 	\+ sub_string(case_insensitive, Keyword, Input),				% Check if keyword is not in title or subject
 	!.																% Prevent unnecessary second pass
 
-% Calculate the score associated with the title of a session
-title_score(_, [], 0).
-title_score(Title, [KeywordPair|RemainingKeywordPairs], Score):-
-	title_score(Title, RemainingKeywordPairs, RemainingScore),		
-	is_in_session(Title, KeywordPair, TitleScore),					% Check if keyword is in title
-	Score is TitleScore * 2 + RemainingScore.						% Title score is doubled
-
 % Calculate the score associated with the subject of a session
 subject_score(_, [], 0).
 subject_score(Subject, [KeywordPair|RemainingKeywordPairs], Score):-
@@ -123,9 +116,12 @@ subject_scores_list([Subject|RemainingSubjects], KeywordPairs, Scores):-
 
 % Calculate the total score of a session
 session_score(Title, Subjects, KeywordPairs, TotalScore):-
-	title_score(Title, KeywordPairs, TitleScore),
 	subject_scores_list(Subjects, KeywordPairs, SubjectScores),
-	append([TitleScore], SubjectScores, Scores),					% Add the title score to the subject scores list
+	subject_score(Title, KeywordPairs, TitleScore),
+
+	DoubleTitleScore is 2 * TitleScore,									% Title score counts as double
+	append([DoubleTitleScore], SubjectScores, Scores),					% Add the title score to the subject scores list
+
 	sum_list(Scores, ScoreSum),											% Sum the new list of scores
 	max_list(Scores, MaxScore),											% Find the max individual score
 	TotalScore is (1000 * MaxScore) + ScoreSum.									% Apply the session score formula
@@ -150,7 +146,6 @@ sort_by_score(TitleScorePairs, SortedTitles, SortedScores) :-
 	reverse(TempList, SortedPairs),									% Reverse to sort in descending order
 	
 	pairs_keys_values(SortedPairs, SortedScores, SortedTitles).		% Separate lists and return them
-
 
 % Prints the results in the requested format
 print_formatted([], []).

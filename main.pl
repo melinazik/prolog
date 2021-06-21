@@ -102,7 +102,7 @@ print_results([], []).
 print_results([Title|RemainingTitles], [Score|RemainingScores]):-
 	write(' Session: '),
 	write(Title), nl,
-	write('	Score = '),
+	write('	Relevance = '),
 	write(Score), nl,
 	print_results(RemainingTitles, RemainingScores).
 

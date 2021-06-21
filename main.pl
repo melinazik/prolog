@@ -16,8 +16,8 @@
 query(ListOfKeywords) :- 
     get_keyword_score_pairs(ListOfKeywords, ProcessedKeywords),
 
-    findall(X, session(X,_), Titles),
-	findall(Y, session(_,Y), Subjects),
+    findall(Title, session(Title, _), Titles),
+	findall(Subject, session(_, Subject), Subjects),
 	score(Titles, Subjects, ProcessedKeywords, Scores),
 
 	pairs_keys_values(TitleScorePairs, Titles, Scores),

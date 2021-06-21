@@ -146,7 +146,7 @@ sort_by_score(Titles, Scores, SortedTitles, SortedScores) :-
 	transpose_pairs(TitleScorePairs, TempList),						% Flip the key-value pairs into value-key pairs and sort by score in ascending order
 	reverse(TempList, SortedPairs),									% Reverse to sort in descending order
 	
-	pairs_keys_values(SortedPairs, SortedScores, SortedTitles).		% Separate lists and return them
+	pairs_keys_values(SortedPairs, SortedScores, SortedTitles).		% Separate lists
 
 % Print the results in the requested format
 print_formatted([], []).

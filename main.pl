@@ -16,8 +16,8 @@ query(ListOfKeywords) :-
     generate_keyword_score_pairs(ListOfKeywords, [], ProcessedList),
     findall(X, session(X,_), Titles),
 	findall(Y, session(_,Y), Subjects),
-	score(Titles, Subjects, ProcessedList, Score),
-	print(Score).
+	score(Titles, Subjects, ProcessedList, Scores),
+	print(Scores).
 	% print(ProcessedList).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,20 +117,17 @@ print_results([HeadTitles|TailTitles], [HeadScores|TailScores]):-
 % return: points of keyword if kewyord is found in session
 %         0 
 
-is_in_session(Input, [Head|_], Score):-
-	pairs_keys([Head], Keyword),
-	pairs_values([Head], Points),
+is_in_session(Input, FullKeyword, Score) :-
+	pairs_keys_values([FullKeyword], [Keyword], [Score]),
 	sub_string(case_insensitive, Keyword, Input),
-	Score is Points,
-	print(Score),
+	% print(Score), nl,
 	!.
 
-is_in_session(Input, [Head|_], Score):-
-	pairs_keys([Head], Keyword),
-	print(Keyword),
+is_in_session(Input, FullKeyword, 0) :-
+	pairs_keys([FullKeyword], [Keyword]),
+	% print(Keyword),
 	\+ sub_string(case_insensitive, Keyword, Input),
-	Score is 0,
-	print(Score),
+	% print(0), nl,
 	!.
 
 % parameters: title - the title of a session
@@ -140,18 +137,18 @@ is_in_session(Input, [Head|_], Score):-
 title_score(_, [], 0).
 title_score(Title, [Head|Tail], Score):-
 	title_score(Title, Tail, RemainingScore),
-	is_in_session(Title, [Head], TitleScore),
+	is_in_session(Title, Head, TitleScore),
 	Score is TitleScore * 2 + RemainingScore.
 
 
 % parameters: subject - the subject of a session
 %             list  - keyword pairs(word - values)
 % 
-% return: list with subject scores of a session
+% return: list with subject scores of a session ?????????????????????
 subject_score(_, [], 0).
 subject_score(Subject, [Head|Tail], Score):-
 	subject_score(Subject, Tail, RemainingScore),
-	is_in_session(Subject, [Head], SubjectScore),
+	is_in_session(Subject, Head, SubjectScore),
 	Score is SubjectScore + RemainingScore.
 
 
@@ -160,10 +157,10 @@ subject_score(Subject, [Head|Tail], Score):-
 % 
 % return: list of scores associated with the subject  
 subject_total_score([], _, []).
-subject_total_score([Head|Tail], [KeywordPairs], Score):-
-	subject_total_score(Tail, [KeywordPairs], RemainingScore),
-	subject_score(Head, [KeywordPairs], SubjectScore),
-	append(SubjectScore, RemainingScore, Score).
+subject_total_score([Head|Tail], KeywordPairs, Score):-
+	subject_total_score(Tail, KeywordPairs, RemainingScore),
+	subject_score(Head, KeywordPairs, SubjectScore),
+	append([SubjectScore], RemainingScore, Score).
 
 
 % parameters: Title - session title
@@ -171,12 +168,12 @@ subject_total_score([Head|Tail], [KeywordPairs], Score):-
 %             list  - keyword pairs(word - values)
 % 
 % return: total score of session which is 1000 * Max + Sum
-session_score(Title, Subjects, [KeywordPairs], TotalScore):-
-	title_score(Title, [KeywordPairs], TitleScore),
-	subject_total_score(Subjects, [KeywordPairs], SubjectScore),
-	append(TitleScore, SubjectScore, Score),
-	sum_list(Score, Sum),
-	max_list(Score, Max),
+session_score(Title, Subjects, KeywordPairs, TotalScore):-
+	title_score(Title, KeywordPairs, TitleScore),
+	subject_total_score(Subjects, KeywordPairs, SubjectScores),
+	append([TitleScore], SubjectScores, Scores),
+	sum_list(Scores, Sum),
+	max_list(Scores, Max),
 	TotalScore is 1000 * Max + Sum.
 
 
@@ -186,8 +183,8 @@ session_score(Title, Subjects, [KeywordPairs], TotalScore):-
 % 
 % return: list with total scores of all sessions
 score([], [], _, []).
-score([Head1|Tail1], [Head2|Tail2], [KeywordPairs], TotalScore):-
-	score(Tail1, Tail2, [KeywordPairs], RemainingScore),
-	session_score(Head1, Head2, [KeywordPairs], SessionScore),
-	append(SessionScore, RemainingScore, TotalScore),
+score([HeadTitle|TailTitle], [HeadSubject|TailSubject], KeywordPairs, TotalScores):-
+	score(TailTitle, TailSubject, KeywordPairs, RemainingScores),
+	session_score(HeadTitle, HeadSubject, KeywordPairs, SessionScore),
+	append([SessionScore], RemainingScores, TotalScores),
 	!.

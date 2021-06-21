@@ -128,7 +128,7 @@ is_in_session(Input, [Head|_], Score):-
 is_in_session(Input, [Head|_], Score):-
 	pairs_keys([Head], Keyword),
 	print(Keyword),
-	not(sub_string(case_insensitive, Keyword, Input)),
+	\+ sub_string(case_insensitive, Keyword, Input),
 	Score is 0,
 	print(Score),
 	!.

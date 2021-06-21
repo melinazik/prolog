@@ -2,6 +2,7 @@
 % Alexandros Sofoulakis 3346
 % Melina Zikou 3357
 
+
 % IMPROVEMENT: The program detects words containing dashes (-) as a single word in all circumstances.
 % For example, the keyword 'semi-transparent'-4 is a single keyword with weight 4, 
 % but the keyword 'semi-transparent glass'-4 is 3 keywords: 
@@ -9,7 +10,6 @@
 % 1) 'semi-transparent glass' with weight 4
 % 2) 'semi-transparent' with weight 2
 % 3) 'glass' with weight 2
-
 
 
 query(ListOfKeywords) :- 

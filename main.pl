@@ -144,7 +144,7 @@ title_score(Title, [Head|Tail], Score):-
 % parameters: subject - the subject of a session
 %             list  - keyword pairs(word - values)
 % 
-% return: list with subject scores of a session ?????????????????????
+% return: list with subject scores of a session
 subject_score(_, [], 0).
 subject_score(Subject, [Head|Tail], Score):-
 	subject_score(Subject, Tail, RemainingScore),

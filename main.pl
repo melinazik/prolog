@@ -105,37 +105,37 @@ title_score(_, [], 0).
 title_score(Title, [KeywordPair|RemainingKeywordPairs], Score):-
 	title_score(Title, RemainingKeywordPairs, RemainingScore),		
 	is_in_session(Title, KeywordPair, TitleScore),					% Check if keyword is in title
-	Score is TitleScore * 2 + RemainingScore.						% Multiply the score of title * 2 (if the keyword is in the title)
+	Score is TitleScore * 2 + RemainingScore.						% Title score is doubled
 
 % Calculate the score associated with the subject of a session
 subject_score(_, [], 0).
 subject_score(Subject, [KeywordPair|RemainingKeywordPairs], Score):-
 	subject_score(Subject, RemainingKeywordPairs, RemainingScore),
-	is_in_session(Subject, KeywordPair, SubjectScore),				% Check if keyword is in subject
-	Score is SubjectScore + RemainingScore.							% Add the score of subject (if the keyword is in the subject)
+	is_in_session(Subject, KeywordPair, SubjectScore),				% Check if keyword is contained in the subject
+	Score is SubjectScore + RemainingScore.							% Add the subject score
 
 % Calculate the scores associated with the subjects of a session and store them in a list
 subject_total_score([], _, []).
 subject_total_score([Subject|RemainingSubjects], KeywordPairs, Score):-
 	subject_total_score(RemainingSubjects, KeywordPairs, TempScore),
 	subject_score(Subject, KeywordPairs, SubjectScore),
-	append([SubjectScore], TempScore, Score).					% Add to the list of subject scores the subject score
+	append([SubjectScore], TempScore, Score).						% Add the subject score in the subject scores list
 
-% Calculate the total score of session which is 1000 * Max + Sum
+% Calculate the total score of a session
 session_score(Title, Subjects, KeywordPairs, TotalScore):-
 	title_score(Title, KeywordPairs, TitleScore),
 	subject_total_score(Subjects, KeywordPairs, SubjectScores),
-	append([TitleScore], SubjectScores, Scores),					% Add to the list of title scores the title score
-	sum_list(Scores, Sum),											% Sum the list of scores
-	max_list(Scores, Max),											% Find the max element of the list of scores
-	TotalScore is 1000 * Max + Sum.									% Calculate the session score
+	append([TitleScore], SubjectScores, Scores),					% Add the title score to the subject scores list
+	sum_list(Scores, Sum),											% Sum the new list of scores
+	max_list(Scores, Max),											% Find the max individual score
+	TotalScore is 1000 * Max + Sum.									% Apply the session score formula
 
 % Calculate the total score of all sessions and store them in a list
 score([], [], _, []).
 score([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], KeywordPairs, TotalScores):-
 	score(RemainingTitles, RemainingSessionSubjects, KeywordPairs, TempScores),
 	session_score(Title, SessionSubjects, KeywordPairs, SessionScore),
-	append([SessionScore], TempScores, TotalScores),				% Add to the list of session scores the session score
+	append([SessionScore], TempScores, TotalScores),				% Add the session score in the session scores list
 	!.																% Prevent unnecessary second pass
 
 

@@ -88,12 +88,12 @@ parse(Keyword, [FullKeyword|SubKeywords]) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Check if a keyword exists in a title or subject of a session
-% If it exists - return the score of the keyword
+% If it exists score is the weight of the keyword
 is_in_session(Input, KeywordPair, Score) :-
 	pairs_keys_values([KeywordPair], [Keyword], [Score]),			% Seperate keyword and score          
 	sub_string(case_insensitive, Keyword, Input).					% Check if keyword is in title or subject
 	
-% If it doesn't exist - return 0
+% If it doesn't exist score is 0
 is_in_session(Input, KeywordPair, 0) :-
 	pairs_keys([KeywordPair], [Keyword]),							% Seperate keyword and score		
 	\+ sub_string(case_insensitive, Keyword, Input),				% Check if keyword is not in title or subject

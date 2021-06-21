@@ -92,10 +92,10 @@ parse(Keyword, [FullKeyword|SubKeywords]) :-
 % Get a list of key-value pairs (title-score) and sort in descending order by score
 sort(TitlesScoresInitial, TitlesFinal, ScoresFinal) :-
 	transpose_pairs(TitlesScoresInitial, TempList),					% flip the key-value pairs onto value-key pairs and sort by value ascending order
-	reverse(TempList, SortedList),											% reverse to sort in descending order
+	reverse(TempList, SortedList),									% reverse to sort in descending order
 	
 	pairs_values(SortedList, TitlesFinal),
-	pairs_keys(SortedList, ScoresFinal). 									%Separate lists and return them
+	pairs_keys(SortedList, ScoresFinal). 							%Separate lists and return them
 
 
 print_results([], []).

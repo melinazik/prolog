@@ -14,10 +14,11 @@
 
 query(ListOfKeywords) :- 
     generate_keyword_score_pairs(ListOfKeywords, [], ProcessedList),
-    % findall(X,session(X,_),Titles),
-	% findall(Y,session(_,Y),Subjects),
-	% score(Titles,Subjects,ProcessedList,Score), 
-    print(ProcessedList).
+    findall(X, session(X,_), Titles),
+	findall(Y, session(_,Y), Subjects),
+	score(Titles, Subjects, ProcessedList, Score), 
+    print(Score).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% SECTION: PARSE KEYWORDS %%%%%%%%%%%%%%%%%
@@ -100,7 +101,7 @@ print_results([HeadTitles|TailTitles], [HeadScores|TailScores]):-
 	write(HeadTitles), nl,
 	write('	Score = '),
 	write(HeadScores), nl,
-	printResults(TailTitles, TailScores).
+	print_results(TailTitles, TailScores).
 
 
 

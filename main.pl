@@ -18,7 +18,7 @@ query(ListOfKeywords) :-
 	findall(SubjectList, session(_, SubjectList), SubjectLists),	% Get all Subject lists in a list
     
 	get_keyword_weight_pairs(ListOfKeywords, ProcessedKeywords),	
-	score(Titles, SubjectLists, ProcessedKeywords, Scores),
+	get_session_scores(Titles, SubjectLists, ProcessedKeywords, Scores),
 	pairs_keys_values(TitleScorePairs, Titles, Scores),				% Pair titles with their session scores
 
 	sort_by_score(TitleScorePairs, SortedTitles, SortedScores),
@@ -115,25 +115,25 @@ subject_score(Subject, [KeywordPair|RemainingKeywordPairs], Score):-
 	Score is SubjectScore + RemainingScore.							% Add the subject score
 
 % Calculate the scores associated with the subjects of a session and store them in a list
-subject_total_score([], _, []).
-subject_total_score([Subject|RemainingSubjects], KeywordPairs, Score):-
-	subject_total_score(RemainingSubjects, KeywordPairs, TempScore),
+subject_scores_list([], _, []).
+subject_scores_list([Subject|RemainingSubjects], KeywordPairs, Scores):-
+	subject_scores_list(RemainingSubjects, KeywordPairs, TempScores),
 	subject_score(Subject, KeywordPairs, SubjectScore),
-	append([SubjectScore], TempScore, Score).						% Add the subject score in the subject scores list
+	append([SubjectScore], TempScores, Scores).						% Add the subject score in the subject scores list
 
 % Calculate the total score of a session
 session_score(Title, Subjects, KeywordPairs, TotalScore):-
 	title_score(Title, KeywordPairs, TitleScore),
-	subject_total_score(Subjects, KeywordPairs, SubjectScores),
+	subject_scores_list(Subjects, KeywordPairs, SubjectScores),
 	append([TitleScore], SubjectScores, Scores),					% Add the title score to the subject scores list
 	sum_list(Scores, Sum),											% Sum the new list of scores
 	max_list(Scores, Max),											% Find the max individual score
 	TotalScore is 1000 * Max + Sum.									% Apply the session score formula
 
 % Calculate the total score of all sessions and store them in a list
-score([], [], _, []).
-score([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], KeywordPairs, TotalScores):-
-	score(RemainingTitles, RemainingSessionSubjects, KeywordPairs, TempScores),
+get_session_scores([], [], _, []).
+get_session_scores([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], KeywordPairs, TotalScores):-
+	get_session_scores(RemainingTitles, RemainingSessionSubjects, KeywordPairs, TempScores),
 	session_score(Title, SessionSubjects, KeywordPairs, SessionScore),
 	append([SessionScore], TempScores, TotalScores),				% Add the session score in the session scores list
 	!.																% Prevent unnecessary second pass

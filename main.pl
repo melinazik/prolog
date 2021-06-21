@@ -19,7 +19,7 @@ query(ListOfKeywords) :-
     
 	get_keyword_weight_pairs(ListOfKeywords, ProcessedKeywords),	
 	score(Titles, SubjectLists, ProcessedKeywords, Scores),
-	pairs_keys_values(TitleScorePairs, Titles, Scores),
+	pairs_keys_values(TitleScorePairs, Titles, Scores),				% Pair titles with their session scores
 
 	sort_by_score(TitleScorePairs, SortedTitles, SortedScores),
 	print_formatted(SortedTitles, SortedScores).

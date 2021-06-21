@@ -33,9 +33,9 @@ query(ListOfKeywords) :-
 generate_keyword_score_pairs([], []).
 % Convert the keyword list given by the user to the full list of weighted keywords that need to be searched
 generate_keyword_score_pairs([Keyword|ListOfKeywords], ProcessedKeywords) :- 
-    generate_keyword_score_pairs(ListOfKeywords, NewList),
+    generate_keyword_score_pairs(ListOfKeywords, TempList),
     parse(Keyword, ProcessedKeyword),                   
-    append(NewList, ProcessedKeyword, ProcessedKeywords).
+    append(TempList, ProcessedKeyword, ProcessedKeywords).
 
 % Keyword matches the pattern keyword-weight
 ensure_full_keyword(Keyword, Keyword) :- 
@@ -65,16 +65,16 @@ get_sub_keywords(Keyword, SubKeywords) :-
     length(SubKeywordList, NumberOfKeywords),                       % Find number of words in phrase
     
     SubWeight is Weight/NumberOfKeywords,                           % Calculate weight of words
-    add_weight_to_sub_keywords(SubKeywordList, SubWeight, [], SubKeywords).
+    add_weight_to_sub_keywords(SubKeywordList, SubWeight, SubKeywords).
 
-% Final step to pass the list to the output variable
-add_weight_to_sub_keywords([], _, WeightedKeywords, WeightedKeywords).
+% Repeat until there are no remaining keywords to be added
+add_weight_to_sub_keywords([], _, []).
 % Recursively add all sub keywords to a list
-add_weight_to_sub_keywords([Keyword|Keywords], Weight, PreviousList, WeightedKeywords) :-
-    % Seperate phrase and weight
+add_weight_to_sub_keywords([Keyword|Keywords], Weight, WeightedKeywords) :-
+    add_weight_to_sub_keywords(Keywords, Weight, TempList),
+    % Combine phrase and weiTemp
     pairs_keys_values([WeightedKeyword], [Keyword], [Weight]),
-    % Repeat until there are no remaining keywords to be added
-    add_weight_to_sub_keywords(Keywords, Weight, [WeightedKeyword|PreviousList], WeightedKeywords).
+	append([WeightedKeyword], TempList, WeightedKeywords).
 
 % Convert a given keyword to a list of itself and all sub keywords with their respective weights
 parse(Keyword, [FullKeyword|SubKeywords]) :- 

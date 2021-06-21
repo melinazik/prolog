@@ -14,13 +14,13 @@
 
 % The entry rule
 query(ListOfKeywords) :- 
-    get_keyword_score_pairs(ListOfKeywords, ProcessedKeywords),
-
     findall(Title, session(Title, _), Titles),						% Get all titles in a list
 	findall(SubjectList, session(_, SubjectList), SubjectLists),	% Get all Subject lists in a list
+    
+	get_keyword_weight_pairs(ListOfKeywords, ProcessedKeywords),	
 	score(Titles, SubjectLists, ProcessedKeywords, Scores),
-
 	pairs_keys_values(TitleScorePairs, Titles, Scores),
+
 	sort_by_score(TitleScorePairs, SortedTitles, SortedScores),
 	print_formatted(SortedTitles, SortedScores).
 
@@ -31,10 +31,10 @@ query(ListOfKeywords) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Repeat until the given list is empty
-get_keyword_score_pairs([], []).
+get_keyword_weight_pairs([], []).
 % Convert the keyword list given by the user to the full list of weighted keywords that need to be searched
-get_keyword_score_pairs([Keyword|ListOfKeywords], ProcessedKeywords) :- 
-    get_keyword_score_pairs(ListOfKeywords, TempList),
+get_keyword_weight_pairs([Keyword|ListOfKeywords], ProcessedKeywords) :- 
+    get_keyword_weight_pairs(ListOfKeywords, TempList),
     parse(Keyword, ProcessedKeyword),                   
     append(TempList, ProcessedKeyword, ProcessedKeywords).
 

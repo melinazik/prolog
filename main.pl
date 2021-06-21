@@ -21,7 +21,7 @@ query(ListOfKeywords) :-
 	score(Titles, Subjects, ProcessedKeywords, Scores),
 
 	pairs_keys_values(TitleScorePairs, Titles, Scores),
-	sort(TitleScorePairs, SortedTitles, SortedScores),
+	sort_by_score(TitleScorePairs, SortedTitles, SortedScores),
 	print_results(SortedTitles, SortedScores).
 
 
@@ -145,7 +145,7 @@ score([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], Keywo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get a list of key-value pairs (title-score) and sort in descending order by score
-sort(TitleScorePairs, SortedTitles, SortedScores) :-
+sort_by_score(TitleScorePairs, SortedTitles, SortedScores) :-
 	transpose_pairs(TitleScorePairs, TempList),						% Flip the key-value pairs into value-key pairs and sort by score in ascending order
 	reverse(TempList, SortedPairs),									% Reverse to sort in descending order
 	

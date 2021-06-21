@@ -72,7 +72,7 @@ add_weight_to_sub_keywords([], _, []).
 % Recursively add all sub keywords to a list
 add_weight_to_sub_keywords([Keyword|Keywords], Weight, WeightedKeywords) :-
     add_weight_to_sub_keywords(Keywords, Weight, TempList),
-    % Combine phrase and weiTemp
+    % Combine phrase and weight
     pairs_keys_values([WeightedKeyword], [Keyword], [Weight]),
 	append([WeightedKeyword], TempList, WeightedKeywords).
 
@@ -90,12 +90,12 @@ parse(Keyword, [FullKeyword|SubKeywords]) :-
 % Check if a keyword exists in a title or subject of a session
 % If it exists score is the weight of the keyword
 is_in_session(Input, KeywordPair, Score) :-
-	pairs_keys_values([KeywordPair], [Keyword], [Score]),			% Seperate keyword and score          
+	pairs_keys_values([KeywordPair], [Keyword], [Score]),			% Seperate keyword and weight          
 	sub_string(case_insensitive, Keyword, Input).					% Check if keyword is in title or subject
 	
 % If it doesn't exist score is 0
 is_in_session(Input, KeywordPair, 0) :-
-	pairs_keys([KeywordPair], [Keyword]),							% Seperate keyword and score		
+	pairs_keys([KeywordPair], [Keyword]),							% Seperate keyword from weight		
 	\+ sub_string(case_insensitive, Keyword, Input),				% Check if keyword is not in title or subject
 	!.																% Prevent unnecessary second pass
 
@@ -148,7 +148,11 @@ sort_by_score(Titles, Scores, SortedTitles, SortedScores) :-
 	
 	pairs_keys_values(SortedPairs, SortedScores, SortedTitles).		% Separate lists
 
-% Print the results in the requested format
+% Print the results in the requested format:
+%
+% Session: "Session Title"
+%		Relevance = "Score"
+%
 print_formatted([], []).
 print_formatted([Title|RemainingTitles], [Score|RemainingScores]):-
 	write(' Session: '),

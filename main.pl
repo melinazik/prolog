@@ -22,7 +22,7 @@ query(ListOfKeywords) :-
 
 	pairs_keys_values(TitleScorePairs, Titles, Scores),
 	sort_by_score(TitleScorePairs, SortedTitles, SortedScores),
-	print_results(SortedTitles, SortedScores).
+	print_formatted(SortedTitles, SortedScores).
 
 
 
@@ -153,13 +153,13 @@ sort_by_score(TitleScorePairs, SortedTitles, SortedScores) :-
 
 
 % Prints the results in the requested format
-print_results([], []).
-print_results([Title|RemainingTitles], [Score|RemainingScores]):-
+print_formatted([], []).
+print_formatted([Title|RemainingTitles], [Score|RemainingScores]):-
 	write(' Session: '),
 	write(Title), nl,
 	write('	Relevance = '),
 	write(Score), nl,
-	print_results(RemainingTitles, RemainingScores).
+	print_formatted(RemainingTitles, RemainingScores).
 
 
 

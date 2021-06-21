@@ -13,7 +13,7 @@
 
 
 query(ListOfKeywords) :- 
-    generate_keyword_score_pairs(ListOfKeywords, [], ProcessedKeywords),
+    generate_keyword_score_pairs(ListOfKeywords, ProcessedKeywords),
 
     findall(X, session(X,_), Titles),
 	findall(Y, session(_,Y), Subjects),
@@ -29,14 +29,13 @@ query(ListOfKeywords) :-
 %%%%%%%%%%%%%%% SECTION: PARSE KEYWORDS %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Final step to pass the list to the output variable
-generate_keyword_score_pairs([], ProcessedList, ProcessedList).
+% Repeat until the given list is empty
+generate_keyword_score_pairs([], []).
 % Convert the keyword list given by the user to the full list of weighted keywords that need to be searched
-generate_keyword_score_pairs([Keyword|ListOfKeywords], PreviousList, ProcessedList) :- 
+generate_keyword_score_pairs([Keyword|ListOfKeywords], ProcessedKeywords) :- 
+    generate_keyword_score_pairs(ListOfKeywords, NewList),
     parse(Keyword, ProcessedKeyword),                   
-    append(PreviousList, ProcessedKeyword, NewList),
-    % Repeat until the given list is empty
-    generate_keyword_score_pairs(ListOfKeywords, NewList, ProcessedList).
+    append(NewList, ProcessedKeyword, ProcessedKeywords).
 
 % Keyword matches the pattern keyword-weight
 ensure_full_keyword(Keyword, Keyword) :- 

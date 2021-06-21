@@ -14,11 +14,16 @@
 
 query(ListOfKeywords) :- 
     generate_keyword_score_pairs(ListOfKeywords, [], ProcessedList),
+
     findall(X, session(X,_), Titles),
 	findall(Y, session(_,Y), Subjects),
 	score(Titles, Subjects, ProcessedList, Scores),
-	print(Scores).
-	% print(ProcessedList).
+
+	pairs_keys_values(TitleScorePairs, Titles, Scores),
+	sort(TitleScorePairs, TitlesFinal, ScoresFinal),
+	print_results(TitlesFinal, ScoresFinal).
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% SECTION: PARSE KEYWORDS %%%%%%%%%%%%%%%%%
@@ -86,7 +91,7 @@ parse(Keyword, [FullKeyword|SubKeywords]) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get a list of key-value pairs (title-score) and sort in descending order by score
-sort_results(TitlesScoresInitial, TitlesFinal, ScoresFinal) :-
+sort(TitlesScoresInitial, TitlesFinal, ScoresFinal) :-
 	transpose_pairs(TitlesScoresInitial, TempList),							% flip the key-value pairs onto value-key pairs and sort by value ascending order
 	reverse(TempList, SortedList),											% reverse to sort in descending order
 	

@@ -38,14 +38,14 @@ ensure_full_keyword(Keyword, FullKeyword) :-
 % Keyword is a single word
 get_sub_keywords(Keyword, []) :-
     pairs_keys([Keyword], [UnweightedKeyword]),                     % Get phrase
-    \+ sub_string(case_insensitive, ' ', UnweightedKeyword),        % Phrase is a single word with no whitespace
+    \+ sub_string(case_insensitive, '\s', UnweightedKeyword),       % Phrase is a single word with no whitespace
     !.                                                              % Prevent unnecessary second pass
 
 % Keyword is a phrase
 get_sub_keywords(Keyword, SubKeywords) :-
     pairs_keys_values([Keyword], [UnweightedKeyword], [Weight]),    % Seperate phrase and weight
     
-    atomic_list_concat(SubKeywordList, ' ', UnweightedKeyword),     % Detect whitespace and split to a list of words
+    split_string(UnweightedKeyword, '\s', '\s', SubKeywordList),    % Detect whitespace and split to a list of words
     length(SubKeywordList, NumberOfKeywords),                       % Find number of words in phrase
     
     SubWeight is Weight/NumberOfKeywords,                           % Calculate weight of words

@@ -19,9 +19,8 @@ query(ListOfKeywords) :-
     
 	get_keyword_weight_pairs(ListOfKeywords, ProcessedKeywords),	
 	get_session_scores(Titles, SubjectLists, ProcessedKeywords, Scores),
-	pairs_keys_values(TitleScorePairs, Titles, Scores),				% Pair titles with their session scores
 
-	sort_by_score(TitleScorePairs, SortedTitles, SortedScores),
+	sort_by_score(Titles, Scores, SortedTitles, SortedScores),
 	print_formatted(SortedTitles, SortedScores).
 
 
@@ -141,7 +140,9 @@ get_session_scores([Title|RemainingTitles], [SessionSubjects|RemainingSessionSub
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get a list of key-value pairs (title-score) and sort in descending order by score
-sort_by_score(TitleScorePairs, SortedTitles, SortedScores) :-
+sort_by_score(Titles, Scores, SortedTitles, SortedScores) :-
+	pairs_keys_values(TitleScorePairs, Titles, Scores),				% Pair titles with their session scores
+
 	transpose_pairs(TitleScorePairs, TempList),						% Flip the key-value pairs into value-key pairs and sort by score in ascending order
 	reverse(TempList, SortedPairs),									% Reverse to sort in descending order
 	

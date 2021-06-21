@@ -10,8 +10,13 @@
 % 2) 'semi-transparent' with weight 2
 % 3) 'glass' with weight 2
 
+:- [sessions].
+
 query(ListOfKeywords) :- 
-    generate_keyword_score_pairs(ListOfKeywords, [], ProcessedList), 
+    generate_keyword_score_pairs(ListOfKeywords, [], ProcessedList),
+    % findall(X,session(X,_),Titles),
+	% findall(Y,session(_,Y),Subjects),
+	% score(Titles,Subjects,ProcessedList,Score), 
     print(ProcessedList).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,22 +85,22 @@ parse(Keyword, [FullKeyword|SubKeywords]) :-
 
 % Gets Start_list, which is a list of key-value pairs (title-score) and sorts in descending order by score
 % Returns separated titles and scores lists
-sort_Res(Start_list,Titles_final,Scores_final) :-
-	transpose_pairs(Start_list,TempList),
+sort_results(StartList, TitlesFinal, ScoresFinal) :-
+	transpose_pairs(StartList, TempList),
 	% transpose_pairs is bbuilt in swi-polog and flips the key-value pairs onto value-key pairs and sorts by value ascending order
-	reverse(Temp_list, Sorted_list),
+	reverse(TempList, SortedList),
     %Now it is sorted in desc order
-	pairs_values(Sorted_list,Titles_final),
-	pairs_keys(Sorted_list,Scores_final). %Separate lists and return them
+	pairs_values(SortedList, TitlesFinal),
+	pairs_keys(SortedList, ScoresFinal). %Separate lists and return them
 
 
-printResults([],[]).
-printResults([H_titles|T1],[H_scores|T2]):-
+print_results([], []).
+print_results([HeadTitles|TailTitles], [HeadScores|TailScores]):-
 	write(' Session: '),
-	write(H_titles),nl,
+	write(HeadTitles), nl,
 	write('	Score = '),
-	write(H_scores),nl,
-	printResults(T1,T2).
+	write(HeadScores), nl,
+	printResults(TailTitles, TailScores).
 
 
 

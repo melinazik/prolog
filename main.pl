@@ -85,24 +85,22 @@ parse(Keyword, [FullKeyword|SubKeywords]) :-
 %%%%%%%%%%%%%%%%%% SECTION: SORT RESULTS %%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Gets Start_list, which is a list of key-value pairs (title-score) and sorts in descending order by score
-% Returns separated titles and scores lists
-sort_results(StartList, TitlesFinal, ScoresFinal) :-
-	transpose_pairs(StartList, TempList),
-	% transpose_pairs is bbuilt in swi-polog and flips the key-value pairs onto value-key pairs and sorts by value ascending order
-	reverse(TempList, SortedList),
-    %Now it is sorted in desc order
+% Get a list of key-value pairs (title-score) and sort in descending order by score
+sort_results(TitlesScoresInitial, TitlesFinal, ScoresFinal) :-
+	transpose_pairs(TitlesScoresInitial, TempList),							% flip the key-value pairs onto value-key pairs and sort by value ascending order
+	reverse(TempList, SortedList),											% reverse to sort in descending order
+	
 	pairs_values(SortedList, TitlesFinal),
-	pairs_keys(SortedList, ScoresFinal). %Separate lists and return them
+	pairs_keys(SortedList, ScoresFinal). 									%Separate lists and return them
 
 
 print_results([], []).
-print_results([HeadTitles|TailTitles], [HeadScores|TailScores]):-
+print_results([Title|RemainingTitles], [Score|RemainingScores]):-
 	write(' Session: '),
-	write(HeadTitles), nl,
+	write(Title), nl,
 	write('	Score = '),
-	write(HeadScores), nl,
-	print_results(TailTitles, TailScores).
+	write(Score), nl,
+	print_results(RemainingTitles, RemainingScores).
 
 
 
@@ -165,5 +163,5 @@ score([], [], _, []).
 score([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], KeywordPairs, TotalScores):-
 	score(RemainingTitles, RemainingSessionSubjects, KeywordPairs, RemainingScores),
 	session_score(Title, SessionSubjects, KeywordPairs, SessionScore),
-	append([SessionScore], RemainingScores, TotalScores),
+	append([SessionScore], RemainingScores, TotalScores),			% Add to the list of session scores the session score
 	!.

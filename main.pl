@@ -93,7 +93,7 @@ is_in_session(Input, KeywordPair, Score) :-
 	pairs_keys_values([KeywordPair], [Keyword], [Score]),			% Seperate keyword and score          
 	sub_string(case_insensitive, Keyword, Input).					% Check if keyword is in title or subject
 	
-% If it doesn't exist- return 0
+% If it doesn't exist - return 0
 is_in_session(Input, KeywordPair, 0) :-
 	pairs_keys([KeywordPair], [Keyword]),							% Seperate keyword and score		
 	\+ sub_string(case_insensitive, Keyword, Input),				% Check if keyword is not in title or subject
@@ -139,7 +139,7 @@ get_session_scores([Title|RemainingTitles], [SessionSubjects|RemainingSessionSub
 %%%%%%%%%%%%%% SECTION: DISPLAY RESULTS %%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Get a list of key-value pairs (title-score) and sort in descending order by score
+% Get a list of key-value pairs (title - score) and sort in descending order by score
 sort_by_score(Titles, Scores, SortedTitles, SortedScores) :-
 	pairs_keys_values(TitleScorePairs, Titles, Scores),				% Pair titles with their session scores
 
@@ -148,7 +148,7 @@ sort_by_score(Titles, Scores, SortedTitles, SortedScores) :-
 	
 	pairs_keys_values(SortedPairs, SortedScores, SortedTitles).		% Separate lists and return them
 
-% Prints the results in the requested format
+% Print the results in the requested format
 print_formatted([], []).
 print_formatted([Title|RemainingTitles], [Score|RemainingScores]):-
 	write(' Session: '),

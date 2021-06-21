@@ -119,12 +119,12 @@ session_score(Title, Subjects, KeywordPairs, TotalScore):-
 	subject_scores_list(Subjects, KeywordPairs, SubjectScores),
 	subject_score(Title, KeywordPairs, TitleScore),
 
-	DoubleTitleScore is 2 * TitleScore,									% Title score counts as double
-	append([DoubleTitleScore], SubjectScores, Scores),					% Add the title score to the subject scores list
+	DoubleTitleScore is 2 * TitleScore,								% Title score counts as double
+	append([DoubleTitleScore], SubjectScores, Scores),				% Add the title score to the subject scores list
 
-	sum_list(Scores, ScoreSum),											% Sum the new list of scores
-	max_list(Scores, MaxScore),											% Find the max individual score
-	TotalScore is (1000 * MaxScore) + ScoreSum.									% Apply the session score formula
+	sum_list(Scores, ScoreSum),										% Sum the new list of scores
+	max_list(Scores, MaxScore),										% Find the max individual score
+	TotalScore is (1000 * MaxScore) + ScoreSum.						% Apply the session score formula
 
 % Calculate the total score of all sessions and store them in a list
 get_session_scores([], [], _, []).

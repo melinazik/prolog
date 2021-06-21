@@ -141,7 +141,7 @@ score([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], Keywo
 	score(RemainingTitles, RemainingSessionSubjects, KeywordPairs, RemainingScores),
 	session_score(Title, SessionSubjects, KeywordPairs, SessionScore),
 	append([SessionScore], RemainingScores, TotalScores),			% Add to the list of session scores the session score
-	!.
+	!.																% Prevent unnecessary second pass
 
 
 

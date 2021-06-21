@@ -11,6 +11,7 @@
 % 3) 'glass' with weight 2
 
 
+
 query(ListOfKeywords) :- 
     generate_keyword_score_pairs(ListOfKeywords, [], ProcessedList),
 
@@ -25,7 +26,7 @@ query(ListOfKeywords) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%% SECTION: PARSE KEYWORDS %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% SECTION: PARSE KEYWORDS %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Final step to pass the list to the output variable
@@ -83,40 +84,13 @@ parse(Keyword, [FullKeyword|SubKeywords]) :-
 
 
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%% SECTION: SORT RESULTS %%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Get a list of key-value pairs (title-score) and sort in descending order by score
-sort(TitlesScoresInitial, TitlesFinal, ScoresFinal) :-
-	transpose_pairs(TitlesScoresInitial, TempList),					% flip the key-value pairs onto value-key pairs and sort by value ascending order
-	reverse(TempList, SortedList),									% reverse to sort in descending order
-	
-	pairs_values(SortedList, TitlesFinal),
-	pairs_keys(SortedList, ScoresFinal). 							%Separate lists and return them
-
-
-print_results([], []).
-print_results([Title|RemainingTitles], [Score|RemainingScores]):-
-	write(' Session: '),
-	write(Title), nl,
-	write('	Relevance = '),
-	write(Score), nl,
-	print_results(RemainingTitles, RemainingScores).
-
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% SECTION: SCORE CALCULATION %%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Check if a keyword exists in a title or subject of a session
 % If it exists - return the score of the keyword
-	is_in_session(Input, FullKeyword, Score) :-
+is_in_session(Input, FullKeyword, Score) :-
 	pairs_keys_values([FullKeyword], [Keyword], [Score]),			% Seperate keyword and score          
 	sub_string(case_insensitive, Keyword, Input),					% Check if keyword is in title or subject
 	!.
@@ -172,9 +146,31 @@ score([Title|RemainingTitles], [SessionSubjects|RemainingSessionSubjects], Keywo
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% SECTION: DISPLAY RESULTS %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Get a list of key-value pairs (title-score) and sort in descending order by score
+sort(TitlesScoresInitial, TitlesFinal, ScoresFinal) :-
+	transpose_pairs(TitlesScoresInitial, TempList),					% flip the key-value pairs onto value-key pairs and sort by value ascending order
+	reverse(TempList, SortedList),									% reverse to sort in descending order
+	
+	pairs_values(SortedList, TitlesFinal),
+	pairs_keys(SortedList, ScoresFinal). 							%Separate lists and return them
+
+
+print_results([], []).
+print_results([Title|RemainingTitles], [Score|RemainingScores]):-
+	write(' Session: '),
+	write(Title), nl,
+	write('	Relevance = '),
+	write(Score), nl,
+	print_results(RemainingTitles, RemainingScores).
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%% SECTION: SESSIONS %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% SECTION: SESSIONS %%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 session('Rules; Semantic Technology; and Cross-Industry Standards',
